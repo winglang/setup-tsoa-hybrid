@@ -56,7 +56,7 @@ export class UsersController extends Controller {
     let team = requestBody.team;
     if (!team) {
       const getTeamByPlayerId: IFunctionClient = getClient(request, "getTeamByPlayerId");
-      team = await getTeamByPlayerId.invoke(playerId) as number
+      team = await getTeamByPlayerId.invoke(playerId) as string
     }
     const store = getClient(request, "playersStore");
     const player: Player = {
