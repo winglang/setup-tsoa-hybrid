@@ -4,17 +4,11 @@ import {
   Get,
   Path,
   Post,
-  Query,
   Route,
   SuccessResponse,
-  Request
 } from "tsoa";
 
-import {
-  Request as RequestExpress,
-} from "express";
-
-import { getClient } from "@winglibs/tsoa/clients.js"
+import { lifted } from "@winglibs/tsoa/clients.js"
 
 import { IBucketClient, IFunctionClient } from "@winglang/sdk/lib/cloud";
 
@@ -30,13 +24,12 @@ export interface PlayerCreationParams {
 }
 
 @Route("players")
-export class UsersController extends Controller {
+export class PlayersController extends Controller {
   @Get("{playerId}")
   public async getUser(
-    @Path() playerId: string,
-    @Request() request: RequestExpress
+    @Path() playerId: string
   ): Promise<Player | undefined> {
-    const store: IBucketClient = getClient(request, "playersStore");
+    const store: IBucketClient = lifted("playersStore");
     const player = await store.tryGet(playerId);
     if (!player) {
       this.setStatus(404);
@@ -45,20 +38,19 @@ export class UsersController extends Controller {
     return JSON.parse(player);
   }
 
-  @SuccessResponse("201", "Created") // Custom success response
+  @SuccessResponse("201", "Created")
   @Post()
   public async createUser(
-    @Body() requestBody: PlayerCreationParams,
-    @Request() request: RequestExpress
+    @Body() requestBody: PlayerCreationParams
   ): Promise<void> {
     this.setStatus(201);
     const playerId = Math.random().toString().slice(-6);
     let team = requestBody.team;
     if (!team) {
-      const getTeamByPlayerId: IFunctionClient = getClient(request, "getTeamByPlayerId");
+      const getTeamByPlayerId: IFunctionClient = lifted("getTeamByPlayerId");
       team = await getTeamByPlayerId.invoke(playerId) as string
     }
-    const store = getClient(request, "playersStore");
+    const store = lifted("playersStore");
     const player: Player = {
       id: playerId,
       team,

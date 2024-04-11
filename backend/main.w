@@ -5,6 +5,10 @@ bring util;
 bring http;
 bring expect;
 
+struct Params {
+  getTeamByPlayerIdArn: str;
+}
+
 // create a AWS function
 if util.env("WING_TARGET") == "tf-aws" {
   bring "cdktf" as cdktf;
@@ -26,15 +30,17 @@ if util.env("WING_TARGET") == "tf-aws" {
   let service = new tsoa.Service(
     controllerPathGlobs: ["../src/*Controller.ts"],
     outputDirectory: "../build",
-    routesDir: "../build"
+    routesDir: "../build" 
   );
   
-  service.liftClient("playersStore", playersStore, ["tryGet", "put"]);
+  service.lift(playersStore, id: "playersStore", allow: ["tryGet", "put"]);
 
   if !nodeof(this).app.isTestEnvironment {
     // get the function ARN after deploying it
-    let getTeamByPlayerId = new aws.FunctionRef("") as "getTeamByPlayerId";
-    service.liftClient("getTeamByPlayerId", getTeamByPlayerId, ["invoke"]);
+    if let arn = nodeof(this).app.parameters.read(schema: Params.schema()).tryGet("getTeamByPlayerIdArn")?.tryAsStr() {
+      let getTeamByPlayerId = new aws.FunctionRef(arn) as "getTeamByPlayerId";
+      service.lift(getTeamByPlayerId, id: "getTeamByPlayerId", allow: ["invoke"]);
+    }
   }
 
   test "can create and retrieve a player" {

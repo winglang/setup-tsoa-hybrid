@@ -11,7 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@winglang/sdk": "^0.68.0",
-    "@winglibs/tsoa": "^0.0.2",
+    "@winglibs/tsoa": "^0.1.0",
     "cdktf": "^0.20.6",
     "express": "^4.19.2",
     "tsoa": "^6.2.0"
