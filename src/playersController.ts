@@ -10,7 +10,7 @@ import {
 
 import { lifted } from "@winglibs/tsoa/clients.js"
 
-import { IBucketClient, IFunctionClient } from "@winglang/sdk/lib/cloud";
+import { IFunctionClient } from "@winglang/sdk/lib/cloud";
 
 export interface Player {
   id: string;
@@ -29,34 +29,35 @@ export class PlayersController extends Controller {
   public async getUser(
     @Path() playerId: string
   ): Promise<Player | undefined> {
-    const store: IBucketClient = lifted("playersStore");
-    const player = await store.tryGet(playerId);
-    if (!player) {
+    const db = lifted("db");
+    const res = await db.query(`
+      SELECT * FROM players WHERE id = ${playerId};
+    `);
+    if (res.length === 0) {
       this.setStatus(404);
       return;
     }
-    return JSON.parse(player);
+    return res[0];
   }
 
   @SuccessResponse("201", "Created")
   @Post()
   public async createUser(
     @Body() requestBody: PlayerCreationParams
-  ): Promise<void> {
+  ): Promise<number> {
     this.setStatus(201);
-    const playerId = Math.random().toString().slice(-6);
+    const name = requestBody.name;
     let team = requestBody.team;
     if (!team) {
-      const getTeamByPlayerId: IFunctionClient = lifted("getTeamByPlayerId");
-      team = await getTeamByPlayerId.invoke(playerId) as string
+      const getTeamByPlayerName: IFunctionClient = lifted("getTeamByPlayerName");
+      team = await getTeamByPlayerName.invoke(name) as string;
     }
-    const store = lifted("playersStore");
-    const player: Player = {
-      id: playerId,
-      team,
-      name: requestBody.name,
-    }
-    await store.put(player.id, JSON.stringify(player));
-    return;
+    const db = lifted("db");
+    const res = await db.query(`
+      INSERT INTO players (name, team) 
+      VALUES ('${name}', '${team}')
+      RETURNING id;`
+    );
+    return res[0].id;
   }
 }
