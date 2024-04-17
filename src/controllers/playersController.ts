@@ -8,10 +8,37 @@ import {
   SuccessResponse,
 } from "tsoa";
 
+import { S3Client , PutObjectCommand} from "@aws-sdk/client-s3"
 import { lifted } from "@winglibs/tsoa/clients.js"
 
-import { IFunctionClient } from "@winglang/sdk/lib/cloud";
+import { IFunctionClient, IBucketClient } from "@winglang/sdk/lib/cloud";
+// import fetch from 'node-fetch';
+import fs from 'fs';
 
+// let s3client = new S3Client();
+
+async function downloadImage(id: string) {
+  let res = await fetch("https://randomuser.me/api/", { headers: {
+    "Content-Type": "application/json"
+  }});
+  let data :any  = await res.json();
+  let image = data.results[0].picture.large;
+  const response = await fetch(image);
+  const arrayBuffer = await response.arrayBuffer();
+  let b:IBucketClient = lifted("bucket"); 
+  
+  // s3client.send(new PutObjectCommand ({
+  //   Bucket: "tsoa-setup-remote-bucket-c894c553-20240416144453173300000002",
+  //   Key:`images/s3-${id}.jpg`,
+  //   Body: Buffer.from(arrayBuffer),
+  //   ContentType: "image/jpeg"
+  // }));
+  console.log(Buffer.from(arrayBuffer).toString("base64"));
+  await b.put(`images/${id}.jpg`,Buffer.from(arrayBuffer).toString("base64").replace(/^data:image\/\w+;base64,/, ""), { contentType: "image/jpeg" });
+  // await b.put(`images/${id}.jpg`,Buffer.from(arrayBuffer) as any , { contentType: "image/jpeg" });
+}
+
+// Usage
 export interface Player {
   id: string;
   team: string;
@@ -58,6 +85,7 @@ export class PlayersController extends Controller {
       VALUES ('${name}', '${team}')
       RETURNING id;`
     );
+    await downloadImage(res[0].id);
     return res[0].id;
   }
 }
