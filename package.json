@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "cd src && wing run"
+    "test": "cd src  && wing test",
+    "dev": "cd src && WING_ENABLE_INPLACE_UPDATES=true  wing run"
   },
   "keywords": [],
   "author": "",

@@ -1,68 +1,42 @@
 bring cloud;
 bring tsoa;
-bring aws;
-bring util;
-bring http;
-bring expect;
 bring postgres;
-bring simtools;
-// a1 = "arn:aws:lambda:us-east-1:320736226858:function:tsoa-setup-remote-function-c86c8d5f"
-// a2 = "tsoa-setup-remote-bucket-c894c553-20240416144453173300000002.s3.amazonaws.com"
+bring "../external/cas-services.w" as cas;
 
-struct Params {
-  getTeamByPlayerNameArn: str?;
-  imagesBucketName: str?;
-}
+let services = new cas.Services();
+let db = new postgres.Database(name: "test", pgVersion: 15) as "RDS: Postgres";
+let api = new tsoa.Service(
+  controllerPathGlobs: ["./controllers/*.ts"],
+  outputDirectory: "../build",
+  routesDir: "../build" 
+);
+
+api.lift(db, id: "db", allow: ["query"]);
+api.lift(services.team(), id: "getTeamByPlayerName", allow: ["invoke"]);
+api.lift(services.imagesBucket(), id: "bucket", allow: ["put"]);
 
 
-let db = new postgres.Database(name: "test", pgVersion: 15);
-new cloud.OnDeploy(inflight () => {
+
+
+let createTable = new cloud.OnDeploy(inflight () => {
   db.query("CREATE TABLE IF NOT EXISTS players (
     id serial PRIMARY KEY,
     name VARCHAR ( 50 ) NOT NULL,
     team VARCHAR ( 50 ) NOT NULL
   );");
 });
+nodeof(createTable).hidden = true;
 
-simtools.addMacro(db, "dump", inflight () => {
-  log(Json.stringify(db.query("SELECT * FROM players"), indent: 1));
-});
 
-let service = new tsoa.Service(
-  controllerPathGlobs: ["./controllers/*.ts"],
-  outputDirectory: "../build",
-  routesDir: "../build" 
-);
 
-service.lift(db, id: "db", allow: ["query"]);
+bring util;
+bring http;
+bring expect;
 
-simtools.addMacro(service, "add user", inflight () => {
-  http.post("{service.url}/players", {
+test "create a player with team" {
+  let res = http.post("{api.url}/players", {
     body: Json.stringify({
-      name: "John Doe",
-      team: "Red Team",
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-});
-
-// get the function ARN after deploying it
-let params = Params.fromJson(nodeof(this).app.parameters.read(schema: Params.schema()));
-if let arn = params.getTeamByPlayerNameArn {
-  let getTeamByPlayerName = new aws.FunctionRef(arn) as "getTeamByPlayerName";
-  service.lift(getTeamByPlayerName, id: "getTeamByPlayerName", allow: ["invoke"]);
-}
-if let bucketName = params.imagesBucketName {
-  let bucket = new aws.BucketRef(bucketName) as "imagesBucket";
-  service.lift(bucket, id: "bucket", allow: ["put"]);
-}
-
-test "can create and retrieve a player" {
-  let res = http.post("{service.url}/players", {
-    body: Json.stringify({
-      name: "John Doe",
+      name: "Red Orbach",
       team: "Red Team",
     }),
     headers: {
@@ -70,15 +44,25 @@ test "can create and retrieve a player" {
     },
   });
   expect.equal(res.status, 201);
-  expect.equal(res.body, "1");
-
-  let players = db.query("SELECT * FROM players");
-  expect.equal(players.length, 1);
-  for player in players {
-    let playerFromHttp = Json.parse(http.get("{service.url}/players/{player.get("id").asNum()}").body);
-    expect.equal(player.get("name"), "John Doe");
-    expect.equal(playerFromHttp.get("name"), "John Doe");
-  }
+  let id = res.body;
+  let player = Json.parse(http.get("{api.url}/players/{id}").body);
+  expect.equal("Red Orbach", player["name"].asStr());
+  expect.equal("Red Team", player["team"].asStr());
 }
 
 
+test "create a player without team uses external service" {
+  let res = http.post("{api.url}/players", {
+    body: Json.stringify({
+      name: "Eyal"
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  expect.equal(res.status, 201);
+  let id = res.body;
+  let player = Json.parse(http.get("{api.url}/players/{id}").body);
+  expect.equal("Eyal", player["name"].asStr());
+  expect.equal("FC Haifa", player["team"].asStr());
+}

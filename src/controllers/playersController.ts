@@ -25,17 +25,9 @@ async function downloadImage(id: string) {
   let image = data.results[0].picture.large;
   const response = await fetch(image);
   const arrayBuffer = await response.arrayBuffer();
-  let b:IBucketClient = lifted("bucket"); 
+  let b: IBucketClient = lifted("bucket"); 
   
-  // s3client.send(new PutObjectCommand ({
-  //   Bucket: "tsoa-setup-remote-bucket-c894c553-20240416144453173300000002",
-  //   Key:`images/s3-${id}.jpg`,
-  //   Body: Buffer.from(arrayBuffer),
-  //   ContentType: "image/jpeg"
-  // }));
-  console.log(Buffer.from(arrayBuffer).toString("base64"));
   await b.put(`images/${id}.jpg`,Buffer.from(arrayBuffer).toString("base64").replace(/^data:image\/\w+;base64,/, ""), { contentType: "image/jpeg" });
-  // await b.put(`images/${id}.jpg`,Buffer.from(arrayBuffer) as any , { contentType: "image/jpeg" });
 }
 
 // Usage
@@ -52,6 +44,14 @@ export interface PlayerCreationParams {
 
 @Route("players")
 export class PlayersController extends Controller {
+  @Get("/")
+  public async getUsers(
+  ): Promise<Player[]> {
+    const db = lifted("db");
+    const res = await db.query(`SELECT * FROM players`);
+    return res;
+  }
+    
   @Get("{playerId}")
   public async getUser(
     @Path() playerId: string
