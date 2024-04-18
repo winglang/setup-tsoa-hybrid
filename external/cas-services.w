@@ -13,7 +13,6 @@ pub class Services {
   }
 
   pub team(): aws.FunctionRef {
-    log(this.params.getTeamByPlayerNameArn!);
     return new aws.FunctionRef(this.params.getTeamByPlayerNameArn!) as "getTeamByPlayerName";
   }
 
