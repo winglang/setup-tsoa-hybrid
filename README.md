@@ -10,6 +10,15 @@ This repo conatins a demo showing how to use Wing to run a TSOA application whic
 
 `wing test backend/main.w`
 
-### Optional - Update the external resources references
+### Optional - Deploy the external resources
 
-Change `wing.json` to reference your external resources. E.g. the images bucket name should point to a bucket in your AWS account
+If you want to interact with the external cloud resources, run:
+
+```sh
+wing compile -t tf-aws external/main.w
+cd external/target/main.tfaws
+terraform init
+terraform apply
+```
+
+Note the terraform outputs are printed after the deployment is done. Copy those values to `wing.json` to interact with those resouces.

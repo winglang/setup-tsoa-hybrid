@@ -16,5 +16,5 @@ let getTeamByPlayerName = new cloud.Function(inflight (payload) => {
   }
 }) as "tsoa-setup-remote-function";
 
-new cdktf.TerraformOutput(value: aws.Function.from(getTeamByPlayerName)?.functionArn) as "a1" ;
-new cdktf.TerraformOutput(value: aws.Bucket.from(bucket)?.bucketName) as "a2";
+new cdktf.TerraformOutput(value: aws.Function.from(getTeamByPlayerName)?.functionArn) as "getTeamByPlayerNameArn" ;
+new cdktf.TerraformOutput(value: aws.Bucket.from(bucket)?.bucketName) as "imagesBucketName";
