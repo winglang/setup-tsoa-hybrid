@@ -9,3 +9,7 @@ This repo conatins a demo showing how to use Wing to run a TSOA application whic
 ### Testing
 
 `wing test backend/main.w`
+
+### Optional - Update the external resources references
+
+Change `wing.json` to reference your external resources. E.g. the images bucket name should point to a bucket in your AWS account
