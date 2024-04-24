@@ -1,9 +1,9 @@
 bring cloud;
 bring tsoa;
 bring postgres;
-bring "../../external/cas-services.w" as cas;
+bring "../../external/acme-services.w" as acme;
 
-let services = new cas.Services();
+let services = new acme.Services();
 let db = new postgres.Database(name: "test", pgVersion: 15) as "RDS: Postgres";
 let api = new tsoa.Service(
   controllerPathGlobs: ["../controllers/*.ts"],
