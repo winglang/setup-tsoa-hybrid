@@ -2,7 +2,14 @@ bring cloud;
 bring tsoa;
 bring postgres;
 bring "../../external/acme-services.w" as acme;
+class PlayerMicroStack extends acme.Services {
+  pub queue: cloud.Queue;
+  new() {
+    this.queue = new cloud.Queue();
 
+  }
+}
+new PlayerMicroStack();
 let services = new acme.Services();
 let db = new postgres.Database(name: "test", pgVersion: 15) as "RDS: Postgres";
 let api = new tsoa.Service(
@@ -15,7 +22,7 @@ let api = new tsoa.Service(
 api.lift(db, id: "db", allow: ["query"]);
 api.lift(services.team(), id: "getTeamByPlayerName", allow: ["invoke"]);
 api.lift(services.imagesBucket(), id: "images", allow: ["put"]);
-
+api.lift(queue, id:"queue", allow:["push"]);
 
 
 
@@ -67,3 +74,20 @@ test "create a player without team uses external service" {
   expect.equal("Eyal", player["name"].asStr());
   expect.equal("FC Haifa", player["team"].asStr());
 }
+
+// test "When creating a new player we should get a message in the queue" {
+//   let res = http.post("{api.url}/players", {
+//     body: Json.stringify({
+//       name: "Eyal"
+//     }),
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
+//   util.waitUntil(() => {
+//     return queue.approxSize() > 0;
+//   });
+//   let actual = queue.pop()!;
+//   log(actual);
+//   expect.equal("1", actual);
+// }

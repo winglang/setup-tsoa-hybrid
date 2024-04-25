@@ -11,7 +11,7 @@ import {
 import { S3Client , PutObjectCommand} from "@aws-sdk/client-s3"
 import { lifted } from "@winglibs/tsoa/clients.js"
 
-import { IFunctionClient, IBucketClient } from "@winglang/sdk/lib/cloud";
+import { IFunctionClient, IBucketClient, IQueueClient } from "@winglang/sdk/lib/cloud";
 // import fetch from 'node-fetch';
 import fs from 'fs';
 
@@ -44,7 +44,6 @@ export interface PlayerCreationParams {
 
 @Route("players")
 export class PlayersController extends Controller {
-  
   @Get("/")
   public async getUsers(
   ): Promise<Player[]> {
@@ -53,6 +52,7 @@ export class PlayersController extends Controller {
     return res;
   }
 
+ 
   @Get("{playerId}")
   public async getUser(
     @Path() playerId: string
@@ -65,6 +65,8 @@ export class PlayersController extends Controller {
       this.setStatus(404);
       return;
     }
+    let q: IQueueClient = lifted("queue");
+    await q.push("" + res[0]);
     return res[0];
   }
 
