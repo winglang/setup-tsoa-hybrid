@@ -9,7 +9,7 @@ pub class Services {
   params: Params;
   new (){
     this.params = Params.fromJson(nodeof(this).app.parameters.read(schema: Params.schema()));
-    nodeof(this).title = "CAS Services";
+    nodeof(this).title = "ACME Services";
   }
 
   pub team(): aws.FunctionRef {
