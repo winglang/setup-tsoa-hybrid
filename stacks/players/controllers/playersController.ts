@@ -65,8 +65,6 @@ export class PlayersController extends Controller {
       this.setStatus(404);
       return;
     }
-    let q: IQueueClient = lifted("queue");
-    await q.push("" + res[0]);
     return res[0];
   }
 
