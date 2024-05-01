@@ -1,11 +1,28 @@
 bring cloud;
-bring "../../../common/acme.w" as acme;
+bring aws;
 
-pub class Service extends acme.Service {
+pub interface IService extends std.IResource {
+  bucket() : cloud.Bucket;
+}
+
+pub class ServiceRef impl IService{
+  bucketRef: aws.BucketRef;
+  new(bucketName: str) {
+    this.bucketRef = new aws.BucketRef(bucketName);
+  }
+  pub bucket(): cloud.Bucket {
+    return unsafeCast(this.bucketRef);
+  }
+}
+
+
+pub class Service  {
   pub blobStorage: cloud.Bucket;
   new() {
-    super("storage");
-    this.blobStorage = this.newBucket();
+    this.blobStorage = new cloud.Bucket();
+  }
+  pub bucket(): cloud.Bucket {
+    return unsafeCast(this.blobStorage);
   }
 }
 

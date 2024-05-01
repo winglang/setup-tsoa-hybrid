@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "dev": "cd infra && WING_ENABLE_INPLACE_UPDATES=true SYSTEM_UNDER_DEV=$(basename $(cd ../ && pwd)) wing run",
-    "test": "cd tests && WING_ENABLE_INPLACE_UPDATES=true SYSTEM_UNDER_DEV=$(basename $(cd ../ && pwd)) wing test"
+    "dev": "cd infra && WING_ENABLE_INPLACE_UPDATES=true wing run",
+    "test": "cd tests && WING_ENABLE_INPLACE_UPDATES=true wing test"
   },
   "dependencies": {
     "winglang": "^0.72.0",
