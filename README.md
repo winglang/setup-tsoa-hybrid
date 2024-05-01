@@ -22,3 +22,12 @@ terraform apply
 ```
 
 Note the terraform outputs are printed after the deployment is done. Copy those values to `wing.json` to interact with those resouces.
+
+## Workarounds, Boilerplate, and Issues
+
+- [ ] DRY: `dev.main.w` is boilerplate for every service, there is also a duplication of this `Service` creation in `main.test.w`
+- [ ] Missing: How do we compile everything
+- [ ] Missing: How do we deploy everything to a dev service (with unique tag for every developer)
+- [ ] ISSUES: wing run watch doesn't work for external stuff and is very directory oriented, should it? 
+- [ ] ISSUES: unsafeCast
+- [ ] Missing: I need to invoke the tsoa lambda  

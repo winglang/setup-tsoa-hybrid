@@ -1,28 +1,14 @@
 {
-  "name": "tsoa-app",
+  "name": "setup-tsoa-hybrid",
   "version": "1.0.0",
-  "description": "",
+  "description": "This repo conatins a demo showing how to use Wing to run a TSOA application which can access both local resources and cloud resources.",
   "main": "index.js",
   "scripts": {
-    "test": "cd src/wing  && wing test",
-    "dev": "cd src/wing && WING_ENABLE_INPLACE_UPDATES=true  wing run"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@winglang/sdk": "latest",
-    "@winglibs/postgres": "latest",
-    "@winglibs/simtools": "latest",
-    "@winglibs/tsoa": "latest",
-    "cdktf": "^0.20.6",
-    "express": "^4.19.2",
-    "tsoa": "^6.2.0",
-    "winglang": "^0.72.1"
-  },
-  "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.12.7",
-    "typescript": "^5.4.4"
+    "cdktf": "^0.20.7"
   }
 }

@@ -1,0 +1,31 @@
+{
+  "name": "players",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "cd infra && WING_ENABLE_INPLACE_UPDATES=true wing run",
+    "test": "cd tests && WING_ENABLE_INPLACE_UPDATES=true wing test"
+  },
+  "dependencies": {
+    "winglang": "^0.72.0",
+    "@winglang/sdk": "latest",
+    "@winglibs/postgres": "latest",
+    "@winglibs/simtools": "latest",
+    "@winglibs/tsoa": "latest",
+    "cdktf": "^0.20.6",
+    "express": "^4.19.2",
+    "tsoa": "^6.2.0"
+},
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.4"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

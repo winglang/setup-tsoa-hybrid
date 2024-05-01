@@ -1,0 +1,23 @@
+{
+  "name": "storage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "cd infra && WING_ENABLE_INPLACE_UPDATES=true SYSTEM_UNDER_DEV=$(basename $(cd ../ && pwd)) wing run",
+    "test": "cd tests && WING_ENABLE_INPLACE_UPDATES=true SYSTEM_UNDER_DEV=$(basename $(cd ../ && pwd)) wing test"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.4"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

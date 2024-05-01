@@ -1,0 +1,16 @@
+{
+  "name": "storage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev":"cd infra && SYSTEM_UNDER_DEV=$(basename $(cd ../ && pwd)) wing run",
+    "test": "cd tests && SYSTEM_UNDER_DEV=$(basename $(cd ../ && pwd)) wing test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
