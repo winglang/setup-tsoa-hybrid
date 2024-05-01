@@ -25,9 +25,7 @@ Note the terraform outputs are printed after the deployment is done. Copy those 
 
 ## Workarounds, Boilerplate, and Issues
 
-- [ ] We don't create new cloud.Function nor new acme.Function instead I am using service.newFunction
-  - [ ] Also related to `SYSTEM_UNDER_DEV=$(basename $(pwd))`
-- [ ] main.w is boilerplate for every service
-- [ ] wing run watch doesn't work for external stuff, should it? 
-- [ ] We are not DRY the service name appears both on the constructor  
-- [ ] unsafeCast
+- [ ] DRY: `dev.main.w` is boilerplate for every service, there is also a duplication of this `Service` creation in `main.test.w`
+- [ ] Missing: How do we compile everything
+- [ ] ISSUES: wing run watch doesn't work for external stuff and is very directory oriented, should it? 
+- [ ] ISSUES: unsafeCast
