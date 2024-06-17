@@ -1,0 +1,9 @@
+- Make sure /* */ auto-close does not happens in strings
+- auto complete sometimes doesn't work in constructors for struct completions
+- When a constructor throws in a wingfile, the stacktrace is only at the caller's "new"
+- postgres container logs are verbose
+- connections to hidden children of other resources not shown
+
+
+
+nodeof(c).hidden = true;

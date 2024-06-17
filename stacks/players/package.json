@@ -1,0 +1,6 @@
+{
+  "name": "@microstacks/players",
+  "scripts": {
+    "dev": "cd infra && WING_ENABLE_INPLACE_UPDATES='true' wing run --watch=../controllers"
+  }
+}

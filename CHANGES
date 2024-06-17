@@ -1,0 +1,23 @@
+# Good Stuff
+- Fixed most cases of "zombies"
+- `@dirname`, mainly for the controller globs
+- `--watch` option for `wing it`
+- TSOA is now a singleton, so the process of generating routes only happens once for all tests
+  - Turns out this wasn't the biggest bottleneck
+- a `cloud.Function` is exposed from TSOA allowing direct invocation of the function
+
+# Easy Issues
+- Automated AWS tagging
+  - custom platform
+- Compile everything at once
+  - All stacks need to be singletons
+- Improve TSOA-only iteration speed for `wing it`
+  - Implement a dev server with `sim.Resource`
+- non-sim combination of TSOA stacks results in monolith
+  - Allow tsoa lib to be used as non-singleton
+
+# Hard Issues
+- Lack of TS<->Wing types
+  - `@typescript` doesn't address this case (the tsoa controllers aren't the entrypoint)
+- Automated process of deploying dev env and linking related resources
+  - Need centralized config and a way to resolve it during preflight
